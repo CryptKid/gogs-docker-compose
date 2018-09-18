@@ -1,0 +1,35 @@
+version: "3"
+
+services:
+  mysql:
+    image: mysql:8.0.12
+    container_name: gogs_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: your_mysql_root_password
+      MYSQL_DATABASE: gogs
+    ports:
+      - "10036:3306"
+    volumes:
+      - ./mysql/config:/etc/mysql/conf.d
+    networks: 
+      gogs_app:
+        aliases:
+          - mysql
+  gogs:
+    image: gogs/gogs:0.11.66
+    container_name: gogs
+    restart: always
+    ports:
+      - "10080:3000"
+      - "10022:22"
+    depends_on:
+      - mysql
+    volumes:
+      - ./data:/data
+    networks: 
+      gogs_app:
+        aliases:
+          - gogs_main
+networks: 
+  gogs_app:
